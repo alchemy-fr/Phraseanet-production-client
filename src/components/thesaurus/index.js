@@ -30,6 +30,26 @@ const thesaurusService = (services) => {
         let cclicks = 0;
         const cDelay = 350;
         let cTimer = null;
+        /* unknown usefullness:*/
+        /*let bclicks = 0, bDelay = 350, bTimer = null;
+         $('body')
+         .on('click', '.thesaurus-from-facets-action', (event) => {
+         event.preventDefault();
+         bclicks++;
+
+         if(bclicks === 1) {
+         bTimer = setTimeout(function() {
+         thesau_clickThesaurus(event);
+         bclicks = 0;
+         }, bDelay);
+
+         } else {
+         console.log('double click')
+         clearTimeout(bTimer);
+         thesau_dblclickThesaurus(event);
+         bclicks = 0;
+         }
+         })*/
 
         $container
 
@@ -709,6 +729,211 @@ const thesaurusService = (services) => {
         appEvents.emit('search.doNewSearch', queryString);
         //searchModule.newSearch(v);
     }
+
+    /* unknown usefullness:
+     function thesau_clickThesaurus(event)	// onclick dans le thesaurus
+     {
+     // on cherche ou on a clique
+     for(var e=event.srcElement ? event.srcElement : event.target; e && ((!e.tagName) || (!e.id)); e=e.parentNode)
+     ;
+     if(e)
+     {
+     switch(e.id.substr(0,4))
+     {
+     case "TH_P":	// +/- de deploiement de mot
+     js = "thesau_thesaurus_ow('"+e.id.substr(5)+"')";
+     self.setTimeout(js, 10);
+     break;
+     }
+     }
+     return(false);
+     }
+
+     function thesau_dblclickThesaurus(event)	// onclick dans le thesaurus
+     {
+     var err;
+     try
+     {
+     options.lastTextfocus.focus();
+     }
+     catch(err)
+     {
+     return;
+     }
+
+     // on cherche ou on a clique
+     for(var e=event.srcElement; e && ((!e.tagName) || (!e.id)); e=e.parentNode)
+     ;
+     if(e)
+     {
+     switch(e.id.substr(0,4))
+     {
+     case "GL_W":	// double click sur le mot
+     var t = e.id.split(".");
+     t.shift();
+     var sbid = t.shift();
+     var thid = t.join(".");
+     var url = "/xmlhttp/getsy_prod.x.php";
+     var parms  = "bid=" + sbid + "&id=" + thid;
+
+     var xmlhttp = new XMLHttpRequest();
+     xmlhttp.open("POST", url, false);
+     xmlhttp.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+     xmlhttp.send(parms);
+     var ret = xmlhttp.responseXML;
+
+     result = ret.getElementsByTagName("result");
+     if(result.length==1)
+     {
+     val = result.item(0).getAttribute("t");
+     replaceEditSel(val);
+     }
+     break;
+     }
+     }
+     return(false);
+     }
+     function replaceEditSel(value)
+     {
+     if(!options.lastTextfocus || !options.lastTextfocus.selectedTerm)
+     return;
+
+     options.lastTextfocus.value = options.lastTextfocus.value.substr(0, options.lastTextfocus.selectedTerm.start) + value + options.lastTextfocus.value.substr(options.lastTextfocus.selectedTerm.end);
+     if(typeof(document.selection) != 'undefined')
+     {
+     // explorer
+     var range = options.lastTextfocus.createTextRange();
+     range.move('character', options.lastTextfocus.selectedTerm.start + value.length);
+     range.select();
+     }
+     else if(typeof(options.lastTextfocus.selectionStart) != 'undefined')
+     {
+     // gecko (safari)
+     options.lastTextfocus.selectionStart = options.lastTextfocus.selectionEnd = options.lastTextfocus.selectedTerm.start + value.length;
+     }
+     cbEditing2(options.lastTextfocus, "MOUSEUP");	// force le calcul de la nouvelle selection
+     options.lastTextfocus.focus();
+     return;
+     }
+
+
+     function thesau_thesaurus_ow(id)	// on ouvre ou ferme une branche de thesaurus
+     {
+     var o = document.getElementById("TH_K."+id);
+     if(o.className=="o")
+     {
+     // on ferme
+     o.className = "c";
+     document.getElementById("TH_P."+id).innerHTML = "+";
+     document.getElementById("TH_K."+id).innerHTML = config.loadingMsg;
+     }
+     else if(o.className=="c" || o.className=="h")
+     {
+     // on ouvre
+     o.className = "o";
+     document.getElementById("TH_P."+id).innerHTML = "-";
+
+     var t_id = id.split(".");
+     var sbas_id = t_id[0];
+     t_id.shift();
+     var thid = t_id.join(".");
+     var url = "/xmlhttp/getterm_prod.x.php";
+     var parms  = "bid=" + sbas_id;
+     parms += "&lng="+p4.lng;
+     parms += "&sortsy=1";
+     parms += "&id=" + thid;
+     parms += "&typ=TH";
+
+     options.thlist['s'+sbas_id].openBranch(id, thid);
+     }
+     return(false);
+     }
+
+     function cbEditing2(textarea, act)
+     {
+     var sbas_id = p4.edit.sbas_id;
+     tmpCurField = 0;
+
+     if(textarea.id=="idZTextArea")
+     {
+     tmpCurField = p4.edit.curField ;
+     }
+     else
+     {
+     if(textarea.id=="idZTextAreaReg")
+     tmpCurField = p4.edit.curFieldReg;
+     }
+
+     options.lastTextfocus = textarea;
+     textarea.selectedTerm = null;
+     var p0 = -1;
+     var p1 = -1;
+     if(typeof(document.selection) != 'undefined')
+     {
+     // ici si explorer
+     var range = document.selection.createRange();
+     var i;
+     var oldrange = range.duplicate();
+     for(i=0; i<200; i++, p0++)
+     {
+     pe = range.parentElement();
+     if(pe != textarea)
+     break;
+     range.moveStart("character", -1);
+     }
+     range = oldrange.duplicate();
+     for(i=0; i<200; i++, p1++)
+     {
+     pe = range.parentElement();
+     if(pe != textarea)
+     break;
+     range.moveEnd("character", -1);
+     }
+     }
+     else if(typeof(textarea.selectionStart) != "undefined")
+     {
+     // ici si gecko (safari)
+     p0 = textarea.selectionStart;
+     p1 = textarea.selectionEnd;
+     }
+     if(p0 != -1 && p1 != -1)
+     {
+     var c;
+     // on etend les positions a tout le keyword (entre ';')
+     t = textarea.value;
+     l = t.length;
+     for( ; p0 > 0; p0--)
+     {
+     c = t.charCodeAt(p0-1);
+     if(c==59 || c==10 || c==13)	// 59==";"
+     break;
+     }
+     for( ; p1 < l; p1++)
+     {
+     c = t.charCodeAt(p1);
+     if(c==59 || c==10 || c==13)
+     break;
+     }
+     // on copie le resultat dans le textarea
+     textarea.selectedTerm = { start:p0, end:p1 };
+
+     // on cherche le terme dans le thesaurus
+     var zText = textarea.value.substr(p0, p1-p0);
+
+     if(document.forms["formSearchTH"].formSearchTHck.checked)
+     {
+     if(zText && zText.length>2 && document.forms["formSearchTH"].formSearchTHfld.value != zText)
+     {
+     document.forms["formSearchTH"].formSearchTHfld.value = zText;
+
+     document.getElementById("TH_searching").src = "/assets/common/images/icons/ftp-loader.gif";
+     options.thlist['s'+sbas_id].search(zText);
+     }
+     }
+     }
+     return(true);
+     }
+     */
 
     function ThesauThesaurusSeeker(sbas_id) {
         this.sbas_id = sbas_id;
