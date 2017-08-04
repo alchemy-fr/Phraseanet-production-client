@@ -16,9 +16,11 @@ const config = require('../config');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 // add loader for external stylesheets:
-var extractCSS = new ExtractTextPlugin('[name].css', {
-    allChunks: true
+var extractCSS = new ExtractTextPlugin({
+  filename: '[name].css',
+  allChunks: true
 });
+
 module.exports = {
     // entry points
     entry: {
@@ -34,9 +36,8 @@ module.exports = {
         'skin-FFFFFF': [config.sourceDir + 'skins/skin-FFFFFF.js']
     },
     cache: true,
-    debug: true,
     watch: true,
-    devtool: 'eval',
+    devtool: 'inline-source-map',
     output: {
         path: config.distDir,
         filename: '[name].js',
@@ -46,75 +47,99 @@ module.exports = {
         publicPath: '/assets/production/'
     },
     module: {
-        preLoaders: [{
+        rules: [
+          {
             test: /\.js$/,
+            enforce: 'pre',
             loader: 'eslint-loader',
             exclude: /node_modules/,
             include: path.join(__dirname, '../../src')
-        }],
-        loaders: [{
+          },
+          {
             test: /\.js$/,
             exclude: /node_modules\/(?!phraseanet-common)/,
-            loader: 'babel',
-            query: {
-                presets: ['es2015', 'stage-0']
-            }
-        }, {
-            test: /\.(ttf|eot|woff|svg|png|jpg|gif)$/,
-            loader: 'url-loader?limit=10000&name=[name].[hash:6].[ext]',
-            exclude: /node_modules/
-        }, {
-            test: /\.(ttf|eot|woff|svg|png|jpg|jpeg|gif)$/,
-            loader: 'file-loader?name=[name].[hash:6].[ext]'
-        }, {
-            test: /\.css$/,
-            loader: 'style-loader!css-loader'
-        },
-        // exclude skins as inline-css in dev env
-        // {
-        //     test: /\.scss$/,
-        //     exclude: /src\/skins\//,
-        //     loaders: ['style', 'css', 'resolve-url', 'sass?sourceMap']
-        // },
-        // only skins are extracted as external file in dev env:
-        // every css should be exported as file in dev env
-        {
-            test: /\.scss$/,
-            // exclude: /src\/(?!skins)/,
-            // include: [path.join(__dirname, '../../src'), path.join(__dirname, '../../stylesheets')],
-            loader: ExtractTextPlugin.extract('css!resolve-url!sass', { publicPath: './'})
-        },{
-            test: require.resolve('jquery-lazyload'),
-            loader: "imports?this=>window"
-        }, {
-            test: require.resolve('phraseanet-common/src/components/tooltip'),
-            loader: "imports?this=>window"
-        }, {
-            test: require.resolve('phraseanet-common/src/components/vendors/contextMenu'),
-            loader: "imports?this=>window"
-        }, {
-            test: require.resolve('geonames-server-jquery-plugin/jquery.geonames'),
-            loader: "imports?this=>window"
-        }, {
-            test: require.resolve('bootstrap-multiselect'),
-            loader: "imports?this=>window"
-        }, {
-            test: /\.json$/,
-            loader: "json"
-        }]
-    },
-    sassLoader: {
-        sourceMap: true
+            use: [{
+              loader: 'babel-loader',
+              options: { presets: ['es2015', 'stage-0'] },
+            }],
+          },
+          {
+              test: /\.(ttf|eot|woff|svg|png|jpg|gif)$/,
+              use: [
+                {
+                  loader: 'url-loader',
+                  options: {
+                    limit: 10000,
+                    name: '[name].[hash:6].[ext]',
+                  }
+                }
+              ],
+              exclude: /node_modules/
+          },
+          {
+              test: /\.(ttf|eot|woff|svg|png|jpg|jpeg|gif)$/,
+              use: [
+                {
+                  loader: 'file-loader',
+                  options: {
+                    name: '[name].[hash:6].[ext]'
+                  }
+                }
+              ]
+          },
+          {
+              test: /\.css$/,
+              use: [
+                "style-loader",
+                "css-loader"
+              ]
+          },
+          // exclude skins as inline-css in dev env
+          // {
+          //     test: /\.scss$/,
+          //     exclude: /src\/skins\//,
+          //     loaders: ['style', 'css', 'resolve-url', 'sass?sourceMap']
+          // },
+          // only skins are extracted as external file in dev env:
+          // every css should be exported as file in dev env
+          {
+              test: /\.scss$/,
+              // exclude: /src\/(?!skins)/,
+              // include: [path.join(__dirname, '../../src'), path.join(__dirname, '../../stylesheets')],
+              use: ExtractTextPlugin.extract({
+                fallback: "style-loader",
+                use: [
+                  'css-loader',
+                  'resolve-url-loader',
+                  { loader: 'sass-loader', options: { sourceMap: true } }
+                ],
+                publicPath: './'
+              })
+          },{
+              test: require.resolve('jquery-lazyload'),
+              use: "imports-loader?this=>window"
+          }, {
+              test: require.resolve('phraseanet-common/src/components/tooltip'),
+              use: "imports-loader?this=>window"
+          }, {
+              test: require.resolve('phraseanet-common/src/components/vendors/contextMenu'),
+              use: "imports-loader?this=>window"
+          }, {
+              test: require.resolve('geonames-server-jquery-plugin/jquery.geonames'),
+              use: "imports-loader?this=>window"
+          }, {
+              test: require.resolve('bootstrap-multiselect'),
+              use: "imports-loader?this=>window"
+          }
+        ]
     },
     resolve: {
-        extensions: ['', '.js', '.css', '.scss']
+        extensions: ['*', '.js', '.css', '.scss']
     },
     plugins: [
         new WebpackNotifierPlugin({
             alwaysNotify: true
         }),
-
-        new webpack.optimize.OccurenceOrderPlugin(),
         // new webpack.BannerPlugin(banner),
         new webpack.ProvidePlugin({
             "videojs": "video.js",
@@ -130,14 +155,19 @@ module.exports = {
             chunks: ['production', 'lightbox'],
             minChunks: 2
         }),
+        new webpack.LoaderOptionsPlugin({
+          debug: true,
+          options: {
+            eslint: {
+              configFile: config.eslintDir
+            }
+          }
+        }),
         extractCSS
         // i18next
     ],
     externals: {
         jquery: 'jQuery',
         ui: 'jQuery.ui'
-    },
-    eslint: {
-        configFile: config.eslintDir
     }
 };

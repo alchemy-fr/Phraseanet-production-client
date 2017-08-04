@@ -6,13 +6,9 @@ const WebpackDevServer = require('webpack-dev-server');
 const environment = require('../environment');
 const config = require('./webpack.development.config');
 
-config.entry = [
-    // For hot style updates
-    'webpack/hot/only-dev-server',
-    // The script refreshing the browser on none hot updates
-    'webpack-dev-server/client?http://localhost:8080'
-].concat(config.entry);
-
+config.devServer = {
+  hot: true
+}
 config.plugins = [
     // Used for hot-reload
     new webpack.HotModuleReplacementPlugin()
@@ -21,14 +17,12 @@ config.plugins = [
 new WebpackDevServer(webpack(config), {
     publicPath: 'http://localhost:8080/assets/',
     // Configure hot replacement
-    hot: true,
     // The rest is terminal configurations
     quiet: false,
     noInfo: true,
     historyApiFallback: {
         index: './templates/index.html'
     },
-    progress: true,
     stats: {
         colors: true
     }

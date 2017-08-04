@@ -1,6 +1,6 @@
 import $ from 'jquery';
 const humane = require('humane-js');
-require('imports?define=>false&exports=>false!./../components/utils/jquery-plugins/colorAnimation');
+require('imports-loader?define=>false&exports=>false!./../components/utils/jquery-plugins/colorAnimation');
 import * as AppCommons from 'phraseanet-common';
 import publication from '../components/publication';
 import workzone from '../components/ui/workzone';

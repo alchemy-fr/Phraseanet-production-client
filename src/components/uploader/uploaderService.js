@@ -1,39 +1,37 @@
 import $ from 'jquery';
 let loadImage = require('blueimp-load-image/js/load-image');
 /* The jQuery UI widget factory, can be omitted if jQuery UI is already included */
-require('imports?$=jquery!blueimp-file-upload/js/vendor/jquery.ui.widget.js');
+require('imports-loader?$=jquery!blueimp-file-upload/js/vendor/jquery.ui.widget.js');
 /* The Iframe Transport is required for browsers without support for XHR file uploads */
-require('imports?define=>false&exports=>false&$=jquery!blueimp-file-upload/js/jquery.iframe-transport.js');
+require('imports-loader?define=>false&exports=>false&$=jquery!blueimp-file-upload/js/jquery.iframe-transport.js');
 /* The basic File Upload plugin */
-require('imports?define=>false&exports=>false&$=jquery!blueimp-file-upload/js/jquery.fileupload.js');
-
+require('imports-loader?define=>false&exports=>false&$=jquery!blueimp-file-upload/js/jquery.fileupload.js');
 
 /**
  * UPLOADER MANAGER
  */
 var UploaderManager = function (options) {
-
     options = options || {};
 
-    if (('container' in options) === false) {
+    if ('container' in options === false) {
         throw 'missing container parameter';
     } else if (!options.container.jquery) {
         throw 'container parameter must be a jquery dom element';
     }
 
-    if (('settingsBox' in options) === false) {
+    if ('settingsBox' in options === false) {
         throw 'missing settingBox parameter';
     } else if (!options.settingsBox.jquery) {
         throw 'container parameter must be a jquery dom element';
     }
 
-    if (('uploadBox' in options) === false) {
+    if ('uploadBox' in options === false) {
         throw 'missing uploadBox parameter';
     } else if (!options.uploadBox.jquery) {
         throw 'container parameter must be a jquery dom element';
     }
 
-    if (('downloadBox' in options) === false) {
+    if ('downloadBox' in options === false) {
         throw 'missing downloadBox parameter';
     } else if (!options.downloadBox.jquery) {
         throw 'container parameter must be a jquery dom element';
@@ -143,8 +141,14 @@ Preview.prototype = {
         return this.options;
     },
     render: function (file, callback) {
-        if (typeof loadImage === 'function' && this.options.fileType.test(file.type)) {
-            if ($.type(this.options.maxSize) !== 'number' || file.size < this.options.maxSize) {
+        if (
+            typeof loadImage === 'function' &&
+            this.options.fileType.test(file.type)
+        ) {
+            if (
+                $.type(this.options.maxSize) !== 'number' ||
+                file.size < this.options.maxSize
+            ) {
                 var options = {
                     maxWidth: this.options.maxWidth || 150,
                     maxHeight: this.options.maxHeight || 75,
@@ -158,14 +162,11 @@ Preview.prototype = {
     }
 };
 
-
 /**
  * FORMATER
  */
 
-var Formater = function () {
-
-};
+var Formater = function () {};
 
 Formater.prototype = {
     size: function (bytes) {
@@ -185,15 +186,15 @@ Formater.prototype = {
             throw bits + ' is not a number';
         }
         // 1 byte = 8 bits
-        var bytes = (bits >> 3);
+        var bytes = bits >> 3;
 
-        if (bytes >= (1 << 30)) {
+        if (bytes >= 1 << 30) {
             return (bytes / (1 << 30)).toFixed(2) + ' Go/s';
         }
-        if (bytes >= (1 << 20)) {
+        if (bytes >= 1 << 20) {
             return (bytes / (1 << 20)).toFixed(2) + ' Mo/s';
         }
-        if (bytes >= (1 << 10)) {
+        if (bytes >= 1 << 10) {
             return (bytes / (1 << 10)).toFixed(2) + ' Ko/s';
         }
         return bytes + ' o/s';
@@ -246,6 +247,5 @@ Queue.prototype = {
         });
     }
 };
-
 
 export default UploaderManager;

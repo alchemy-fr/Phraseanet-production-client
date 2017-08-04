@@ -5,8 +5,6 @@ import videojs from 'video.js';
 
 const ModalDialog = videojs.getComponent('ModalDialog');
 
-
-
 class HotkeyModal extends ModalDialog {
 
 

@@ -11,9 +11,11 @@ const config = require('../config');
 const webpackConfig = require('./webpack.production.config')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-var extractCSS = new ExtractTextPlugin('[name].min.css', {
-    allChunks: true
+var extractCSS = new ExtractTextPlugin({
+  filename: '[name].css',
+  allChunks: true
 });
+
 module.exports = Object.assign({}, webpackConfig, {
     output: {
         path: config.distDir,
@@ -36,8 +38,6 @@ module.exports = Object.assign({}, webpackConfig, {
             alwaysNotify: true
         }),
         // optimizations
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin({
             '__DEV__': false,
