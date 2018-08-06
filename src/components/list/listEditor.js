@@ -6,13 +6,12 @@ const listEditor = (services, options) => {
     const $editor = $('#list-editor-search-results');
     const $form = $('#ListManager .editor').find('form[name="list-editor-search"]');
 
-    $('a.next, a.prev', $editor).bind('click', function () {
+    $('a.next, a.prev', $editor).bind('click', function (event) {
+        event.preventDefault();
         const page = $(this).attr('value');
 
         $('input[name="page"]', $form).val(page);
         $form.trigger('submit');
-
-        return false;
     });
 
     $('input[name="page"]', $form).val('');
