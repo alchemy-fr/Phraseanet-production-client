@@ -32,7 +32,7 @@ const Feedback = function (services, options) {
         var $el = $(event.currentTarget);
         $el.find('.image-normal').hide();
         $el.find('.image-hover').show();
-        ;    });
+    });
 
     this.container.on('mouseleave', '.list-trash-btn', function (event) {
         var $el = $(event.currentTarget);

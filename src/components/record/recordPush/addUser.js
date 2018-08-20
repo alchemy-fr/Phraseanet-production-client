@@ -32,6 +32,9 @@ const pushAddUser = (services) => {
             if($el.hasClass('validation')) {
                 dialogOptions.isValidation = true;
             }
+            if($el.hasClass('push-add-user-listmanager')) {
+                dialogOptions.isListManager = true;
+            }
 
             openModal(dialogOptions);
         });
@@ -49,6 +52,9 @@ const pushAddUser = (services) => {
 
         if(dialogOptions.isValidation) {
             $dialog.getDomElement().closest('.ui-dialog').addClass('validation');
+        }
+        if(dialogOptions.isListManager) {
+            $dialog.getDomElement().closest('.ui-dialog').addClass('push-add-user-listmanager');
         }
 
         return $.get(`${url}prod/push/add-user/`, function (data) {
