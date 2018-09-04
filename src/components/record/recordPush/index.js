@@ -31,7 +31,7 @@ const pushRecord = (services) => {
 
     }
 
-    function removeList(list_id) {
+    function removeList(listObj) {
         var makeDialog = function (box) {
 
             var buttons = {};
@@ -40,14 +40,14 @@ const pushRecord = (services) => {
 
                 var callbackOK = function () {
                     $('.list-container ul.list').children().each(function() {
-                        if($(this).data('list-id') == list_id.list_id) {
+                        if($(this).data('list-id') == listObj.list_id) {
                             $(this).remove();
                         }
                     });
                     dialog.get(2).close();
                 };
 
-                listManagerInstance.removeList(list_id.list_id, callbackOK);
+                listManagerInstance.removeList(listObj.list_id, callbackOK);
             };
 
             var options = {
@@ -56,7 +56,19 @@ const pushRecord = (services) => {
                 size: 'Alert'
             };
 
-            dialog.create(services, options, 2).setContent(box);
+            const $dialog = dialog.create(services, options, 2);
+
+            if(listObj.container === '#ListManager') {
+                $dialog.getDomElement().closest('.ui-dialog').addClass('dialog_delete_list_listmanager');
+            }
+            $dialog.getDomElement().closest('.ui-dialog').addClass('dialog_container dialog_delete_list')
+                .find('.ui-dialog-buttonset button')
+                .each( function() {
+                    var self = $(this).children();
+                    if(self.text() === 'Validate') self.text('Yes')
+                    else self.text('No');
+                });
+            $dialog.setContent(box);
         };
 
         var html = _.template($('#list_editor_dialog_delete_tpl').html());

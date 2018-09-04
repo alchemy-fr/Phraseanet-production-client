@@ -17,6 +17,7 @@ const listShare = (services, options) => {
         let { listId, modalOptions, modalLevel } = options;
 
         $dialog = dialog.create(services, modalOptions, modalLevel);
+        $dialog.getDomElement().closest('.ui-dialog').addClass('dialog_container dialog_share_list')
 
         return $.get(`${url}prod/lists/list/${listId}/share/`, function (data) {
             $dialog.setContent(data);

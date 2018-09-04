@@ -38,9 +38,11 @@ Lists.prototype = {
         });
 
     },
-    get: function (callback, type) {
+    get: function (callback, type, selectedList) {
 
         type = typeof type === 'undefined' ? 'json' : type;
+
+        // selectedList = type === 'undefined' ? null : selectedList;
 
         $.ajax({
             type: 'GET',
@@ -61,7 +63,8 @@ Lists.prototype = {
                     }
                 } else {
                     if (typeof callback === 'function') {
-                        callback(data);
+                        
+                        callback(data, selectedList);
                     }
                 }
             }

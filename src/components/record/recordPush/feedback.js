@@ -32,7 +32,7 @@ const Feedback = function (services, options) {
         var $el = $(event.currentTarget);
         $el.find('.image-normal').hide();
         $el.find('.image-hover').show();
-        ;    });
+    });
 
     this.container.on('mouseleave', '.list-trash-btn', function (event) {
         var $el = $(event.currentTarget);
@@ -44,7 +44,11 @@ const Feedback = function (services, options) {
         var $el = $(event.currentTarget);
         var list_id = $el.parent().data('list-id');
 
-        appEvents.emit('push.removeList', {list_id: list_id});
+        appEvents.emit('push.removeList', {
+                list_id: list_id,
+                container: containerId
+            }
+        );
     });
 
 

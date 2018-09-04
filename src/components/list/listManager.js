@@ -27,7 +27,7 @@ const ListManager = function (services, options) {
 
             listShare(services).openModal({
                 listId, modalOptions: {
-                    size: 'Small',
+                    size: '350x500',
                     closeButton: true,
                     title: $el.attr('title')
                 }, modalLevel: 2
@@ -64,23 +64,48 @@ const ListManager = function (services, options) {
             });
 
             return false;
+        })
+        .on('mouseenter', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            $el.find('.image-normal').hide();
+            $el.find('.image-hover').show();
+        })
+        .on('mouseleave', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            $el.find('.image-normal').show();
+            $el.find('.image-hover').hide();
+        })
+        .on('click', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            var list_id = $el.parent().data('list-id');
+            appEvents.emit('push.removeList', {
+                    list_id: list_id, 
+                    container: containerId
+                }
+            );
         });
-
 
     var initLeft = () => {
         $container.on('click', '.push-refresh-list-action', (event) => {
+            event.preventDefault();
+
             //$('a.list_refresh', $container).bind('click', (event) => {
             // /prod/lists/all/
-            var callback = function (datas) {
+            var selectedList = $('.lists_manager_list.selected').data('list-id')
+
+            var callback = function (datas, selected) {
                 $('.all-lists', $container).removeClass('loading').append(datas);
-                initLeft();
+
+                if (typeof selected === 'number') {
+                    $('.all-lists').find('.lists_manager_list[data-list-id="' + selected + '"]').addClass('selected');
+                }
+                // initLeft();
             };
 
             $('.all-lists', $container).empty().addClass('loading');
 
-            this.userList.get(callback, 'html');
+            this.userList.get(callback, 'html', selected);
 
-            return false;
         });
 
         $container.on('click', '.push-add-list-action', (event) => {
@@ -109,10 +134,14 @@ const ListManager = function (services, options) {
                 var options = {
                     cancelButton: true,
                     buttons: buttons,
-                    size: '700x170'
+                    title: localeService.t('New list'),
+                    size: '315x170'
                 };
 
-                dialog.create(services, options, 2).setContent(box);
+                const $dialog = dialog.create(services, options, 2);
+                $dialog.getDomElement().closest('.ui-dialog').addClass('dialog_container dialog_add_list')
+                    .find('.ui-dialog-buttonset button:first-child .ui-button-text').text('Add');
+                $dialog.setContent(box);
             };
 
             var html = _.template($('#list_editor_dialog_add_tpl').html());
@@ -133,8 +162,8 @@ const ListManager = function (services, options) {
             event.preventDefault();
             let $el = $(event.currentTarget);
             const listId = $el.data('list-id');
-            $el.closest('.lists').find('.list.selected').removeClass('selected');
-            $el.parent('li.list').addClass('selected');
+            $el.closest('.lists').find('.list').removeClass('selected');
+            $el.parent().addClass('selected');
 
             $.ajax({
                 type: 'GET',

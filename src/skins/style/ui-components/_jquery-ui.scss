@@ -213,6 +213,8 @@ $tabDisabledTextColor: $mediumTextActiveColor !default;
 .ui-dialog.ui-widget-content {
     border: $modalBorder;
     background: $modalBackground;
+}
+.ui-dialog.ui-widget-content, .ui-widget-overlay {
     z-index: 5000;
 }
 
