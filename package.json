@@ -96,7 +96,7 @@
     "npmlog": "^4.1.2",
     "optimize-css-assets-webpack-plugin": "^3.0.0",
     "phantomjs-polyfill": "0.0.2",
-    "phantomjs-prebuilt": "^2.1.14",
+    "phantomjs-prebuilt": "^2.1.16",
     "postcss-loader": "^2.0.6",
     "pre-commit": "^1.2.2",
     "resolve-url-loader": "^2.1.0",
