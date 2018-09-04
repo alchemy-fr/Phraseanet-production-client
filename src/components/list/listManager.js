@@ -64,8 +64,22 @@ const ListManager = function (services, options) {
             });
 
             return false;
+        })
+        .on('mouseenter', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            $el.find('.image-normal').hide();
+            $el.find('.image-hover').show();
+        })
+        .on('mouseleave', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            $el.find('.image-normal').show();
+            $el.find('.image-hover').hide();
+        })
+        .on('click', '.list-trash-btn', function (event) {
+            var $el = $(event.currentTarget);
+            var list_id = $el.parent().data('list-id');
+            appEvents.emit('push.removeList', {list_id: list_id});
         });
-
 
     var initLeft = () => {
         $container.on('click', '.push-refresh-list-action', (event) => {
@@ -133,7 +147,7 @@ const ListManager = function (services, options) {
             event.preventDefault();
             let $el = $(event.currentTarget);
             const listId = $el.data('list-id');
-            $el.closest('.lists').find('.list.selected').removeClass('selected');
+            $el.closest('.lists').find('.list').removeClass('selected');
             $el.parent('li.list').addClass('selected');
 
             $.ajax({
