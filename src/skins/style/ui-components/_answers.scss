@@ -126,6 +126,55 @@ $answersInfoLabelColor: #949494 !default;
         font-size: 11px;
         line-height: 12px;
         border-right: 1px solid $answersDocInfoBorder;
+        position: relative;
+        .detailed_info_holder {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+
+            .image-normal {
+                display: block;
+            }
+            .image-hover {
+                display: none;
+            }
+            &:hover {
+                .image-normal {
+                    display: none;
+                }
+                .image-hover {
+                    display: block;
+                }
+            }
+            &:hover .detailed_info {
+                display: block;
+            }
+        }
+        .detailed_info {
+            display: none;
+            position: absolute;
+            bottom: 27px;
+            min-width: 240px;
+            background-color: #1B6577;
+            padding: 10px;
+            border-radius: 5px;
+            th {
+                padding-bottom: 10px;
+                font-weight: normal;
+                color: #ccc;
+                font-size: 9px;
+            }
+            tbody tr:last-child td {
+                padding-bottom: 10px;
+            }
+            tfoot tr {
+                border-top: 1px solid rgba(255,255,255,.5);
+            }
+            tfoot td {
+                padding-top: 10px;
+                margin-top: 10px;
+            }
+        }
     }
 }
 
