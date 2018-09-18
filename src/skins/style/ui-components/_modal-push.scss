@@ -9,7 +9,7 @@ $orangeThemeColor: #ff9400;
     box-shadow: 0 0 0 1px #ff9400, 0 0 5px rgba(0,0,0,0.3) !important;
 }
 input.text_input_white {
-    border-radius: 7px;
+    border-radius: 6px;
     border: 0 none;
     height: 18px;
 }
@@ -947,7 +947,7 @@ input.text_input_white {
     text-align: right;
 }
 
-.PushBox .all-lists .lists {
+.PushBox .sts .lists {
     overflow: auto;
 }
 
@@ -1020,7 +1020,6 @@ input.text_input_white {
     //    }
     //}
 }
-
 .all-lists .list-trash-btn {
     padding: 7px 4px 12px !important;
 }
@@ -1033,7 +1032,6 @@ input.text_input_white {
         margin-right: 25px;
     }
 }
-
 .PushBox .welcome {
     text-align: center;
     font-size: 16px;
@@ -1070,7 +1068,7 @@ input.text_input_white {
 }
 
 #list-editor-search-results table tr.odd {
-    background-color: #515151;
+    background-color: #b8b8b8;
 }
 
 #list-editor-search-results table tr.selected {
@@ -1104,6 +1102,42 @@ input.text_input_white {
 
 #list-editor-search-results table th.sortable.sorted span.ord_notifier {
     display: inline;
+}
+
+.list_editor_results_footer {
+    padding: 5px;
+    color: #000;
+    font-size: 12px;
+    border-top: 1px solid #888;
+    background: #c8c8c8;
+    a {
+        color: #000;
+        margin-right: 10px;
+        span {
+            border: solid black;
+            border-width: 0 1px 1px 0;
+            display: inline-block;
+            padding: 4px;
+            margin: 0 5px;
+        }
+        &:hover {
+            color: #fff;
+            span {
+                border-color: #fff;
+            }
+        }
+    }
+    a.prev span {
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+    }
+    a.next span {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+    .textinfo {
+        margin-right: 20px;
+    }
 }
 
 #ListShare {
@@ -1441,9 +1475,14 @@ input.text_input_white {
         border-radius: 0;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        overflow: hidden;
         font-size: 12px;
         color: #000;
+    }
+    .list_editor_selector td select::-webkit-scrollbar {
+        width: 4px;
+    }
+    .list_editor_selector td select::-webkit-scrollbar-thumb {
+        background-color: #d8d8d8;
     }
     .list_editor_selector td select::-webkit-scrollbar-track {
         background-color: #ffffff;
@@ -1457,6 +1496,12 @@ input.text_input_white {
         margin-bottom: -2px;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+    }
+    .list_editor_selector_filter_holder {
+        width: 95%;
+        overflow: hidden;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
     }
 }
 
@@ -1611,5 +1656,14 @@ input.text_input_white {
         .image-hover {
             display: block;
         }
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    #ListManager .editor .list_editor_selector td select {
+        height: 120px;
+    }
+    #ListManager .readwrite .content {
+        top: 290px !important;
     }
 }
