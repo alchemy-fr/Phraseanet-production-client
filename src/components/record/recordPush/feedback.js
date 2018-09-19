@@ -316,7 +316,7 @@ const Feedback = function (services, options) {
         return false;
     });
 
-    this.container.on('click', 'a.list_loader', function (event) {
+    this.container.on('click', 'a.list_push_loader', function (event) {
         var url = $(this).attr('href');
 
         var callbackList = function (list) {
