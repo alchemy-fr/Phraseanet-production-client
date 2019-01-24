@@ -248,8 +248,6 @@ const workzoneFacets = services => {
                             selectedFacetValues[facet.title] = [];
                         }
                         selectedFacetValues[facet.title].push(facetData);
-                                                
-                        appEvents.emit('search.getSelectedFacetValues', selectedFacetValues);
                         _facetCombinedSearch();
                     }
                 },
@@ -443,176 +441,13 @@ const workzoneFacets = services => {
         // searchModule.newSearch(q);
     }
 
-    function serializeJSON(data, selectedFacetValues, facets) {
-        
-        let json = {},
-            obj = {},
-            bases = [],
-            statuses = [],
-            fields = [],
-            aggregates = []
-        ;
-    
-        $.each(data, function(i, el) {
-            obj[el.name] = el.value;
-    
-            let col = parseInt(el.value);
-    
-            if(el.name === 'bases[]') {
-                bases.push(col);
-            }
-    
-            if(el.name.startsWith('status')) {
-                let databoxId = el.name.match(/\d+/g)[0],
-                    databoxRow = el.name.match(/\d+/g)[1],
-                    statusMatch = false
-                ;
-                
-                $.each(statuses, function(i, status) {
-                    
-                    if (status.databox === databoxId) {                    
-                        for (let j = 0; j < status.status.length; j++) {
-                            let st = status.status[j].name;
-                            let st_id = st.substr(0, st.indexOf(':'));
-                            
-                            if (st_id === databoxRow) {
-                                statusMatch = true;                            
-                            }
-                        }
-                        statuses.splice((databoxId -1), 1);
-                    }
-                });
-                if (!statusMatch) {
-                    statuses.push({
-                        'databox': databoxId,
-                        'status': [
-                            {
-                                'index': databoxRow,
-                                'value': !!(parseInt(el.value))
-                            }
-                        ]
-                    });
-                }
-            }
-        });
-    
-        $('.term_select_field').each(function(i, el) {
-            if ($(el).val()) {
-                fields.push({
-                    'type': 'TEXT-FIELD',
-                    'field': 'field.' + $(el).val(),
-                    'operator': $(el).next().val() === 'contains' ? ":" : "=",
-                    'value': $(el).next().next().val(),
-                    "enabled": true
-                });
-            }
-        }); 
-        
-        $(facets).each(function(i, el) {
-            
-            let facetFilterTitle = el.label,
-                facetType = el.type,
-                facetField = el.field,
-                facetRawVal,
-                facetQuery,
-                nodeEl,
-                negated = false,
-                enabled = true
-            ;
-
-            $('.fancytree-node.fancytree-folder').each(function (i, node) {
-                var nodeTitile = $(node).find('.fancytree-title').text();                    
-                if (nodeTitile === facetFilterTitle) {
-                    nodeEl = $(node).find('[class^="facetFilter_"]');
-                }
-            });
-    
-            if (nodeEl.is('[class$="_EXCEPT"]')) {
-                negated = true;
-            }
-            
-            _.each(selectedFacetValues[facetFilterTitle], function(facet) {
-                let query = facet.value.query;
-                for (let i = 0; i < el.values.length; i++) {                        
-                    if (el.values[i].query === query) {
-                        facetRawVal = el.values[i].raw_value;
-                        facetQuery = el.values[i].query;
-                    }
-                }
-
-                if(facetQuery === query) {                    
-                    aggregates.push({
-                        'type': facetType,
-                        'field': facetField,
-                        'value': facetRawVal,
-                        'negated': negated,
-                        'enabled': enabled
-                    });
-                }
-            });
-        });
-        
-        json['sort'] = {
-            'field': obj.sort,
-            'order': obj.ord
-        };
-        json['perpage'] = parseInt($('#nperpage_value').val());
-        json['page'] = obj.pag === "" ? 1 : parseInt(obj.pag);
-        json['use_truncation'] = obj.truncation === "on" ? true : false;
-        json['phrasea_recordtype'] = obj.search_type === 0 ? 'RECORD' : 'STORY';
-        json['phrasea_mediatype'] = obj.record_type.toUpperCase();
-        json['bases'] = bases;
-        json['statuses'] = statuses;
-        json['query'] = {
-            '_ux_zone': $('.menu-bar .selectd').text().toUpperCase(),
-            'type': 'CLAUSES',
-            'must_match': 'ALL',
-            'enabled': true,
-            'clauses': [
-                {
-                    '_ux_zone': 'FULLTEXT',
-                    'type': 'FULLTEXT',
-                    'value': obj.fake_qry,
-                    'enabled': true
-                },
-                {
-                    '_ux_zone': 'FIELDS',
-                    'type': 'CLAUSES',
-                    'must_match': obj.must_match,
-                    'enabled': true,
-                    'clauses': fields
-                },
-                {
-                    "type": "DATE-FIELD",
-                    "field": "DATE",
-                    "from": $('#ADVSRCH_DATE_ZONE input[name=date_min]', 'form.phrasea_query .adv_options').val(),
-                    "to": $('#ADVSRCH_DATE_ZONE input[name=date_max]', 'form.phrasea_query .adv_options').val(),
-                    "enabled": true
-                },
-                {
-                    "_ux_zone": "AGGREGATES",
-                    "type": "CLAUSES",
-                    "must_match": "ALL",
-                    "enabled": true,
-                    "clauses": aggregates
-                }
-            ]
-        }
-        
-        // console.log(json);
-        // console.log(buildQ(json.query));
-        
-        return JSON.stringify(json);
-    }
-
     appEvents.listenAll({
         'facets.doLoadFacets': loadFacets,
-        'facets.doResetSelectedFacets': resetSelectedFacets
+        'facets.doResetSelectedFacets': resetSelectedFacets,
     });
 
     return {
         loadFacets,
-        serializeJSON,
         resetSelectedFacets
     };
 };
