@@ -390,6 +390,31 @@ const ui = services => {
             margin = margin + minMargin;
 
             $('#answers .diapo').css('margin', '5px ' + margin + 'px');
+            var answerIcons = $('#answers .bottom_actions_holder .fa-stack');
+            var answerIconsHolder = $('.bottom_actions_holder');
+            if (el.outerWidth() < 180) {
+                answerIcons.css('width', '20px');
+                answerIcons.css('font-size', '10px');
+                answerIconsHolder.addClass('twenty');
+            }
+
+            if ((el.outerWidth() >= 180) && (el.outerWidth() < 260)) {
+                answerIcons.css('width', '24px');
+                answerIcons.css('font-size', '12px');
+                answerIconsHolder.addClass('twenty-four');
+            }
+
+            if (el.outerWidth() >= 260) {
+                answerIcons.css(
+                    'width', '30px'
+                  );
+                answerIcons.css(
+                    'font-size', '15px'
+                );
+                answerIcons.closest('td').css('width', '110px');
+                answerIconsHolder.css('height', '36px');
+                answerIconsHolder.addClass('thirty');
+            }
         }
     };
 
