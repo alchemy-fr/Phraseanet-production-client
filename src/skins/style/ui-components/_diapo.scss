@@ -100,6 +100,7 @@ $diapoBorderColor: $darkerBorderColor !default;
   }
 }
 .icon-stack-wrapper {
+  background: none;
   .thirty & {
     height: 30px;
   }
