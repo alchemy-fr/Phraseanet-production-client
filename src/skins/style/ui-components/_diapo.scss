@@ -101,6 +101,7 @@ $diapoBorderColor: $darkerBorderColor !default;
 }
 .icon-stack-wrapper {
   background: none;
+  float: right;
   .thirty & {
     height: 30px;
   }
@@ -109,17 +110,6 @@ $diapoBorderColor: $darkerBorderColor !default;
   }
   .twenty-four & {
     height: 23px;
-  }
-}
-.text-stack-wrapper {
-  .thirty & {
-    width: 180px;
-  }
-  .twenty & {
-    width: 30px;
-  }
-  .twenty-four & {
-    width: 110px;
   }
 }
 
