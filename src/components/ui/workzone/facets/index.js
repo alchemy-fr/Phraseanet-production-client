@@ -584,7 +584,7 @@ const workzoneFacets = services => {
                 },
                 {
                     "type": "DATE-FIELD",
-                    "field": "DATE",
+                    "field": $('#ADVSRCH_DATE_ZONE select', 'form.phrasea_query .adv_options').val(),
                     "from": $('#ADVSRCH_DATE_ZONE input[name=date_min]', 'form.phrasea_query .adv_options').val(),
                     "to": $('#ADVSRCH_DATE_ZONE input[name=date_max]', 'form.phrasea_query .adv_options').val(),
                     "enabled": true
