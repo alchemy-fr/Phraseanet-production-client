@@ -306,18 +306,16 @@ class RangeCollection extends Component {
         let exportedRanges = [`WEBVTT
 `];
         for (let i = 0; i < this.rangeCollection.length; i++) {
-            let exportableData = {
-                title: this.rangeCollection[i].title
-            };
+            let exportableData = this.rangeCollection[i].title.splice(1,1);;
 
-            if (this.rangeCollection[i].image.src !== '') {
+           /* if (this.rangeCollection[i].image.src !== '') {
                 exportableData.image = this.rangeCollection[i].image.src;
                 exportableData.manualSnapShot = this.rangeCollection[i].manualSnapShot || false;
-            }
+            }*/
 
             exportedRanges.push(`${i + 1}
 ${formatTime(this.rangeCollection[i].startPosition, 'hh:mm:ss.mmm')} --> ${formatTime(this.rangeCollection[i].endPosition, 'hh:mm:ss.mmm')}
-${JSON.stringify(exportableData)}
+${JSON.stringify(exportableData).replace(/\"/g, "")}
 `)
         }
         return exportedRanges.join('\n');
