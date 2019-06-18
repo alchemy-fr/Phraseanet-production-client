@@ -306,7 +306,7 @@ class RangeCollection extends Component {
         let exportedRanges = [`WEBVTT
 `];
         for (let i = 0; i < this.rangeCollection.length; i++) {
-            let exportableData = this.rangeCollection[i].title.splice(1,1);;
+            let exportableData = this.rangeCollection[i].title;
 
            /* if (this.rangeCollection[i].image.src !== '') {
                 exportableData.image = this.rangeCollection[i].image.src;
