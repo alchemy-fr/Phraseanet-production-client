@@ -31,6 +31,8 @@ const videoRangeCapture = (services, datas, activeTab = false) => {
             options.playbackRates = initData.videoEditorConfig.playbackRates === undefined ? [1, 2, 3] : initData.videoEditorConfig.playbackRates;
             options.vttFieldValue = false;
             options.vttFieldName = initData.videoEditorConfig.vttFieldName === undefined ? false : initData.videoEditorConfig.vttFieldName;
+            options.vttFieldValueWithImage = false;
+            options.vttFieldNameWithImage = initData.videoEditorConfig.vttFieldNameWithImage === undefined ? false : initData.videoEditorConfig.vttFieldNameWithImage;
         }
 
         options.techOrder = ['html5', 'flash'];
@@ -51,6 +53,17 @@ const videoRangeCapture = (services, datas, activeTab = false) => {
                     options.vttFieldValue = vttField._value.VideoTextTrackChapters[0];
                 }
                 options.meta_struct_id = vttField.id;
+            }
+        }
+
+        if (options.vttFieldNameWithImage !== false) {
+            var fieldCollection = new FieldCollection(initData.T_fields);
+            let vttFieldWithImage = fieldCollection.getFieldByName(options.vttFieldNameWithImage);
+            if (vttFieldWithImage !== false) {
+                if(vttFieldWithImage._value.VideoTextTrackChaptersWithImage != undefined) {
+                    options.vttFieldValueWithImage = vttFieldWithImage._value.VideoTextTrackChaptersWithImage[0];
+                }
+                options.meta_struct_id = vttFieldWithImage.id;
             }
         }
 

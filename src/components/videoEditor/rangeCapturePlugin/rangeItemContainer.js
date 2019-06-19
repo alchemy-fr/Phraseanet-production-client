@@ -34,6 +34,7 @@ class RangeItemContainer extends Component {
             this.$el.on('click', '.export-vtt-ranges', (event) => {
                 event.preventDefault();
                 this.rangeCollection.exportVTTRangeEvent();
+                this.rangeCollection.exportVTTRangeEventWithImage();
             });
         }
 
@@ -74,7 +75,7 @@ class RangeItemContainer extends Component {
         $(this.el()).append(`
 <div class="btn-container">
     <button class="btn add-range" type="button"><i class="fa fa-plus" aria-hidden="true"></i> ${this.player_.localize('Add new range')}</button>
-    <button class="btn export-vtt-ranges" type="button"><i class="fa fa-hdd" aria-hidden="true"></i> ${this.player_.localize('Save as VTT')}</button>
+    <button class="btn export-vtt-ranges export-vtt-ranges-with-image" type="button"><i class="fa fa-hdd" aria-hidden="true"></i> ${this.player_.localize('Save as VTT')}</button>
     <!--<button class="button button-primary export-ranges" type="button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> ${this.player_.localize('Export video ranges')}</button>-->
 </div>`);
         return $(this.el_);

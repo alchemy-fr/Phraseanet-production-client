@@ -184,6 +184,9 @@ const plugin = function (options) {
             case 'export-vtt-ranges':
                 this.rangeCollection.exportRangesData(params.data);
                 break;
+            case 'export-vtt-ranges-with-image':
+                this.rangeCollection.exportRangesData(params.data);
+                break;
             case 'resize':
                 this.setEditorWidth();
                 break;

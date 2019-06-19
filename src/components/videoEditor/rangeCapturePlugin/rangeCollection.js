@@ -76,6 +76,12 @@ class RangeCollection extends Component {
             data: this.exportVttRanges()
         });
     }
+    exportVTTRangeEventWithImage() {
+        this.player_.rangeStream.onNext({
+            action: 'export-vtt-ranges-with-image',
+            data: this.exportVttRangesWithImage()
+        });
+    }
 
     setHoverChapter(isChecked) {
         this.isHoverChapterSelected = isChecked;
@@ -302,16 +308,32 @@ class RangeCollection extends Component {
         }
         return exportedRanges;
     }
+    exportVttRangesWithImage = () => {
+        let exportedRangesWithImage = [`WEBVTT
+`];
+        for (let i = 0; i < this.rangeCollection.length; i++) {
+            let exportableData = {
+                title: this.rangeCollection[i].title
+            };
+
+            if (this.rangeCollection[i].image.src !== '') {
+                exportableData.image = this.rangeCollection[i].image.src;
+                exportableData.manualSnapShot = this.rangeCollection[i].manualSnapShot || false;
+            }
+
+            exportedRangesWithImage.push(`${i + 1}
+${formatTime(this.rangeCollection[i].startPosition, 'hh:mm:ss.mmm')} --> ${formatTime(this.rangeCollection[i].endPosition, 'hh:mm:ss.mmm')}
+${JSON.stringify(exportableData)}
+`)
+        }
+        return exportedRangesWithImage.join('\n');
+    }
+
     exportVttRanges = () => {
         let exportedRanges = [`WEBVTT
 `];
         for (let i = 0; i < this.rangeCollection.length; i++) {
             let exportableData = this.rangeCollection[i].title;
-
-           /* if (this.rangeCollection[i].image.src !== '') {
-                exportableData.image = this.rangeCollection[i].image.src;
-                exportableData.manualSnapShot = this.rangeCollection[i].manualSnapShot || false;
-            }*/
 
             exportedRanges.push(`${i + 1}
 ${formatTime(this.rangeCollection[i].startPosition, 'hh:mm:ss.mmm')} --> ${formatTime(this.rangeCollection[i].endPosition, 'hh:mm:ss.mmm')}

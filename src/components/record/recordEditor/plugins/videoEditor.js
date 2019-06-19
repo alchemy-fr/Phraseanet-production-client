@@ -14,13 +14,15 @@ const videoEditor = (services) => {
     };
     const initialize = (params) => {
         let initWith = {$container, parentOptions, data} = params;
-
+console.log('fdfdf');
         if (data.videoEditorConfig !== null) {
             options.seekBackwardStep = data.videoEditorConfig.seekBackwardStep;
             options.seekForwardStep = data.videoEditorConfig.seekForwardStep;
             options.playbackRates = data.videoEditorConfig.playbackRates === undefined ? [1, 2, 3] : data.videoEditorConfig.playbackRates;
             options.vttFieldValue = false;
+            options.vttFieldValueWithImage = false;
             options.vttFieldName = data.videoEditorConfig.vttFieldName === undefined ? false : data.videoEditorConfig.vttFieldName;
+            options.vttFieldNameWithImage = data.videoEditorConfig.vttFieldNameWithImage === undefined ? false : data.videoEditorConfig.vttFieldNameWithImage;
         }
 
         options.techOrder = ['html5', 'flash'];
@@ -31,6 +33,13 @@ const videoEditor = (services) => {
             let vttField = parentOptions.fieldCollection.getFieldByName(options.vttFieldName);
             if (vttField !== false) {
                 options.vttFieldValue = vttField._value
+            }
+        }
+
+        if (options.vttFieldNameWithImage !== false) {
+            let vttFieldWithImage = parentOptions.fieldCollection.getFieldByName(options.vttFieldNameWithImage);
+            if (vttFieldWithImage !== false) {
+                options.vttFieldValueWithImage = vttFieldWithImage._value
             }
         }
 
@@ -58,6 +67,18 @@ const videoEditor = (services) => {
                                 fields: {}
                             };
                             presets.fields[options.vttFieldName] = [params.data];
+                            recordEditorEvents.emit('recordEditor.addPresetValuesFromDataSource', {
+                                data: presets
+                            });
+                        }
+                        break;
+                        case 'export-vtt-ranges-with-image':
+                        if (options.vttFieldNameWithImage !== false) {
+
+                            let presets = {
+                                fields: {}
+                            };
+                            presets.fields[options.vttFieldNameWithImage] = [params.data];
                             recordEditorEvents.emit('recordEditor.addPresetValuesFromDataSource', {
                                 data: presets
                             });
