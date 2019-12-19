@@ -52,6 +52,10 @@ const previewRecordService = services => {
                 var v = $(ui.position.left)[0];
                 $('#PREVIEWLEFT').width(v);
                 $('#PREVIEWRIGHT').css('left', $(ui.position.left)[0]);
+
+                var originalWidth= $('#phraseanet-embed-preview-frame').data('original-width');
+                $('#phraseanet-embed-preview-frame iframe').css('max-width', originalWidth);
+
                 resizePreview();
             }
         });
