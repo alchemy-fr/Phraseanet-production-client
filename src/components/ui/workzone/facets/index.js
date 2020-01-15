@@ -129,9 +129,9 @@ const workzoneFacets = services => {
             })
         );
 
-        if (data.facetOrder == ORDER_BY_BCT) {
+       /* if (data.facetOrder == ORDER_BY_BCT) {
             treeSource = _sortByPredefinedFacets(treeSource, 'name', ['base_aggregate', 'collection_aggregate', 'doctype_aggregate']);
-        }
+        }*/
 
         if (data.filterFacet == true) {
             treeSource = _hideSingleValueFacet(treeSource);
