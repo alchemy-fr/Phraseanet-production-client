@@ -453,7 +453,9 @@ const workzoneFacets = services => {
 
                                     /*add selected facet tooltip*/
                                     s_facet.attr('title', facetValue.value.value);
-                                    s_facet.tooltip();
+                                    s_facet.tooltip({
+                                        extraClass: 'tooltip_flat mt_25'
+                                    });
 
                                     s_facet.hover(function () {
                                         $(buttonsSpan).show();
