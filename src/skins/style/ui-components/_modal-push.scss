@@ -381,8 +381,9 @@ input.text_input_white {
         background-color: $feedbackThemeColor;
     }
     .PushBox .user_content .badges .badge.selected {
-        border-color: $feedbackThemeColor;
+        border-color: #000000;
     }
+
     .general_togglers button {
         color: $feedbackThemeColor;
         padding-left: 35px;
@@ -882,7 +883,7 @@ input.text_input_white {
 }
 
 .PushBox .user_content .badges .badge.selected {
-    border: 3px solid $pushThemeColor;
+    border: 3px solid #000000;
 }
 
 .PushBox .user_content .badges .badge .toggles .status_on .toggle_off {

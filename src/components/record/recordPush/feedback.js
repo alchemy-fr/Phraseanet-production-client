@@ -59,7 +59,7 @@ const Feedback = function (services, options) {
         var callback = function callback(datas) {
             var context = $(datas);
             var dataList = $(context).find('.lists').prop('outerHTML');
-                        
+
             var refreshContent = $('.LeftColumn .content .lists', $container);
             refreshContent.removeClass('loading').append(dataList);
         };
@@ -270,6 +270,14 @@ const Feedback = function (services, options) {
         var html = _.template($('#feedback_sendform_tpl').html());
 
         $dialog.setContent(html);
+
+        var feedbackTitle =  $('#feedbackTitle').val();
+        var pushTitle =  $('#pushTitle').val();
+        if (options.isValidation) {
+            $('input[name="name"]').attr("placeholder", feedbackTitle);
+        }else {
+            $('input[name="name"]').attr("placeholder", pushTitle);
+        }
 
         $('input[name="name"]', $dialog.getDomElement()).val($('input[name="name"]', $FeedBackForm).val());
         $('textarea[name="message"]', $dialog.getDomElement()).val($('textarea[name="message"]', $FeedBackForm).val());
