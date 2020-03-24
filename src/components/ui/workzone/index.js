@@ -79,6 +79,7 @@ const workzone = (services) => {
                 $('#' + IDname).show();
             }
 
+            workzoneOptions.refresh('current', 'date');
             $container.attr('data-status', 'open');
             $('.WZbasketTab').css('background-position', '9px 21px');
             $container.removeClass('closed');
@@ -252,9 +253,9 @@ const workzone = (services) => {
         if (basketId === 'current' && active.length > 0) {
             basketId = active.attr('id').split('_').slice(1, 2).pop();
         }
-        sort = ($.inArray(sort, ['date', 'name']) >= 0) ? sort : '';
+        sort = ($.inArray(sort, ['date', 'name']) >= 0) ? sort : 'date';
 
-        scrolltobottom = typeof scrolltobottom === 'undefined' ? false : scrolltobottom;
+            scrolltobottom = typeof scrolltobottom === 'undefined' ? false : scrolltobottom;
 
         $.ajax({
             type: 'GET',
