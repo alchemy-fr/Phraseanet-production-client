@@ -359,6 +359,10 @@ const ui = services => {
         if (!$.support.cssFloat) {
             // $('#idFrameC .insidebloc').width(el - 56);
         }
+        appEvents.emit('workzone.refresh', {
+            basketId: 'current',
+            sort: 'date'
+        });
         var widthA = Math.round(window.bodySize.x - el - 10);
         $('#rightFrame').width(widthA);
         $('#rightFrame').css('left', $('#idFrameC').width());
