@@ -1083,12 +1083,45 @@ h4 {
     margin-right: 8px;
     margin-bottom: 0px;
     &.status-active {
-        background-color: #58d5b5;
-        box-shadow: 0 0 6px #69fcd6;
+        background-color: #5cb85c;
     }
     &.status-inactive {
-        background-color: #aaaaaa;
-        box-shadow: inset 1px 1px 2px 0px rgba(0, 0, 0, 0.7);
+        background-color:rgba(0, 0, 0, 0.7);
+    }
+}
+.tools-sharing-row {
+    background: #626262;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.tools-sharing-title {
+    line-height: 31px;
+    font-weight: bold;
+    padding-left: 20px;
+}
+.tools-sharing-btn {
+    padding: 6px 25px;
+}
+#prod-tool-box {
+    .ui-tabs .ui-tabs-nav {
+        background: #626262;
+    }
+}
+.metadatas-top-block {
+    text-align: right;
+}
+#metadata-content {
+    padding: 10px;
+    hr {
+        margin: 5px 0;
+    }
+}
+#tool-tabs {
+    & > div {
+        background: none;
+        height: 100%;
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 #loader {
