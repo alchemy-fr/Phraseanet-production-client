@@ -259,7 +259,7 @@
   .grid-wrapper {
       position: relative;
       &.selected {
-        border: 2px solid $bgInverseHoverColor;
+        border: 2px solid #aa46bb;
       }
       #small_thumb_download_button,
       #small_thumb_delete_button {
@@ -321,4 +321,12 @@
       display: block;
       padding-bottom: 16px;
   }
+}
+
+.videotools-spinner {
+  z-index: 2000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }

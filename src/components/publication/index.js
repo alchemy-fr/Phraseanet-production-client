@@ -369,11 +369,10 @@ const publication = (services) => {
     }
 
     var fetchPublications = function (page) {
-        if (page === undefined && $answers !== undefined) {
+        if (page === undefined ) {
             // @TODO $answers can be undefined
             $answers.empty();
         }
-        if ($answers !== undefined) {
             curPage = page;
             return _fetchRemote(`${url}prod/feeds/`, {
                 page: page
@@ -395,7 +394,6 @@ const publication = (services) => {
                     }
                     return;
                 });
-        }
     };
 
 

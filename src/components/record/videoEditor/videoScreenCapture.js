@@ -50,6 +50,10 @@ const videoScreenCapture = (services, datas, activeTab = false) => {
 
 
             $container.on('click', '#thumb_camera_button', function () {
+                $('#videotools-spinner').removeClass('hidden');
+                setTimeout(launch_thumb_camera_button, 10);
+            });
+            function launch_thumb_camera_button() {
                 /** set current time on real video capture**/
                 var realVideoCurrent = document.getElementById('thumb_video_A').currentTime;
                 document.getElementById('thumb_video').currentTime = realVideoCurrent;
@@ -57,33 +61,37 @@ const videoScreenCapture = (services, datas, activeTab = false) => {
                 $('#thumb_delete_button', $container).show();
                 $('#thumb_download_button', $container).show();
 
-                var screenshot = ThumbEditor.screenshot();
+                var screenshot = '';
                 /**screenshot at the real currentTime**/
-                screenshot = ThumbEditor.screenshot();
+               function getScreenShot() {
+                    var screenshot = ThumbEditor.screenshot();
 
-                if($container.find('#thumb_canvas').height() >= 210) {
-                    $container.find('#thumb_canvas').css('height', '210px');
-                    $container.find('#grid').css('min-height', '210px');
+                    if($container.find('#thumb_canvas').height() >= 210) {
+                        $container.find('#thumb_canvas').css('height', '210px');
+                        $container.find('#grid').css('min-height', '210px');
+                    }
+                    $container.find('.frame_canva').css('width', $container.find('#thumb_canvas').width());
+                    $container.find('.canvas-wrap').css('overflow','hidden').css('width', $container.find('#thumb_canvas').width());
+
+                    $('.selected', $gridContainer).removeClass('selected');
+                    var grid_wrapper = document.createElement('div');
+                    $(grid_wrapper)
+                        .addClass('grid-wrapper')
+                        .addClass('selected')
+                        .attr('id', 'working_' + screenshot.getId())
+                        .append('<div id="small_thumb_download_button"/>')
+                        .append('<div id="small_thumb_delete_button"/>');
+                    var img = $('<img />');
+                    img.attr('src', screenshot.getDataURI())
+                        .attr('alt', screenshot.getVideoTime())
+                        .appendTo($(grid_wrapper));
+
+                    var grid_item = document.createElement('div');
+                    $(grid_item).addClass('grid-item').append($(grid_wrapper)).appendTo($gridContainer);
+                    $('#videotools-spinner').addClass('hidden');
                 }
-                $container.find('.frame_canva').css('width', $container.find('#thumb_canvas').width());
-                $container.find('.canvas-wrap').css('overflow','hidden').css('width', $container.find('#thumb_canvas').width());
-
-                $('.selected', $gridContainer).removeClass('selected');
-                var grid_wrapper = document.createElement('div');
-                $(grid_wrapper)
-                    .addClass('grid-wrapper')
-                    .addClass('selected')
-                    .attr('id', 'working_' + screenshot.getId())
-                    .append('<div id="small_thumb_download_button"/>')
-                    .append('<div id="small_thumb_delete_button"/>');
-                var img = $('<img />');
-                img.attr('src', screenshot.getDataURI())
-                    .attr('alt', screenshot.getVideoTime())
-                    .appendTo($(grid_wrapper));
-
-                var grid_item = document.createElement('div');
-                $(grid_item).addClass('grid-item').append($(grid_wrapper)).appendTo($gridContainer);
-            });
+                setTimeout(getScreenShot, 1000);
+            };
 
             $container.on('mouseup', '#thumb_camera_button', function () {
                 $container.find('#thumb_canvas').removeAttr('style');
@@ -269,13 +277,17 @@ const videoScreenCapture = (services, datas, activeTab = false) => {
         var next = imgWrapper.parent().next();
 
         if (previous.length > 0) {
-            previous.find('.grid-wrapper').trigger('click');
+            previous.find('.grid-wrapper').trigger('mousedown');
+            previous.find('.grid-wrapper').trigger('mouseup');
         } else if (next.length > 0) {
-            next.find('.grid-wrapper').trigger('click');
+            next.find('.grid-wrapper').trigger('mousedown');
+            next.find('.grid-wrapper').trigger('mouseup');
         } else {
             $('#thumb_delete_button', $container).hide();
             $('#thumb_download_button', $container).hide();
-            ThumbEditor.resetCanva();
+            $('#thumb_canvas').attr('width',0);
+            $('#thumb_canvas').attr('height',0);
+            $('.frame_canva').removeAttr('style');
         }
 
         imgWrapper.parent().remove();
