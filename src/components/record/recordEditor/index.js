@@ -321,15 +321,12 @@ const recordEditorService = services => {
             });
         }
 
-        $('#idEditDateZone', options.$container).datepicker({
-            changeYear: true,
-            changeMonth: true,
-            dateFormat: 'yy/mm/dd',
-            onSelect: function (dateText, inst) {
+        $('#idEditDateZone', options.$container).DateTimePicker({
+            dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
+            afterHide: function (dateText, inst) {
                 var lval = $editTextArea.val();
                 if (lval !== dateText) {
                     options.fieldLastValue = lval;
-                    $editTextArea.val(dateText);
                     $editTextArea.trigger('keyup.maxLength');
                     options.textareaIsDirty = true;
                     validateFieldChanges(null, 'ok');
@@ -576,12 +573,36 @@ const recordEditorService = services => {
 
                     if (field.type === 'date') {
                         $editTextArea.css('height', '16px');
-                        $('#idEditDateZone', options.$container).show();
+                        //$('#idEditDateZone', options.$container).show();
+                        $('#datetime-picker-field', options.$container).show();
+                        $('#idEditZTextArea', options.$container).hide();
+                        $('#datetime-picker-field').trigger('click');
                     } else {
                         $('#idEditDateZone', options.$container).hide();
+                        $('#datetime-picker-field', options.$container).hide();
+                        $('#idEditZTextArea', options.$container).show();
                         $editTextArea.css('height', '100%');
                     }
+                    $('#datetime-picker-field').on('change', function () {
+                        $('#idEditZTextArea').val($(this).val().split('-').join('/'));
 
+                    });
+                   /* function isValidDate(dateString) {
+                        var regEx = /^\d{4}[/]\d{2}[/]\d{2}$/;
+                       return dateString.match(regEx) != null;
+                    }
+                    function isValidDateTime(dateString) {
+                       var regExTime = /^\d{4}[/]\d{2}[/]\d{2}[ ](\d{2}):(\d{2}):(\d{2})$/;
+                        return dateString.match(regExTime) != null;
+                    }
+                    $('#datetime-picker-field').on('change', function () {
+                       var testDate =  isValidDate(this.value);
+                       var testDateTime =  isValidDateTime(this.value);
+                        if (testDate == false && testDateTime == false) {
+                            console.log('diso');
+                        }
+
+                    });*/
                     $ztextStatus.hide();
                     $('#ZTextMultiValued', options.$container).hide();
                     $editMonoValTextArea.show();

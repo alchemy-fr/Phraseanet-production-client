@@ -9,6 +9,7 @@ require('./../../node_modules/jquery-ui-datepicker-with-i18n/ui/i18n/jquery.ui.d
 require('./../../node_modules/jquery-ui-datepicker-with-i18n/ui/i18n/jquery.ui.datepicker-nl.js');
 require('./../../node_modules/jquery-ui-datepicker-with-i18n/ui/i18n/jquery.ui.datepicker-en-GB.js');
 
+require('./../js-lib/datetimepicker/DateTimePicker.js');
 $.widget.bridge('uitooltip', $.fn.tooltip);
 //window.btn = $.fn.button.noConflict(); // reverts $.fn.button to jqueryui btn
 //$.fn.btn = window.btn; // assigns bootstrap button functionality to $.fn.btn
