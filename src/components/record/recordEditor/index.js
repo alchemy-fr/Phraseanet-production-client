@@ -321,11 +321,15 @@ const recordEditorService = services => {
             });
         }
 
-        $('#idEditDateZone', options.$container).DateTimePicker({
-            dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
-            afterHide: function (dateText, inst) {
+        $('#datetime-picker-field', options.$container).datetimepicker({
+            dateFormat: 'yy/mm/dd',
+            timeFormat: 'HH:mm:ss',
+            stepHour: 2,
+            stepMinute: 10,
+            stepSecond: 10,
+            onClose: function (dateText, inst) {
                 var lval = $editTextArea.val();
-                if (lval !== dateText) {
+                if($('.date-timepicker-error').hasClass('ok')) {
                     options.fieldLastValue = lval;
                     $editTextArea.trigger('keyup.maxLength');
                     options.textareaIsDirty = true;
@@ -333,6 +337,7 @@ const recordEditorService = services => {
                 }
             }
         });
+
 
         checkRequiredFields();
 
@@ -587,7 +592,7 @@ const recordEditorService = services => {
                         $('#idEditZTextArea').val($(this).val().split('-').join('/'));
 
                     });
-                   /* function isValidDate(dateString) {
+                    function isValidDate(dateString) {
                         var regEx = /^\d{4}[/]\d{2}[/]\d{2}$/;
                        return dateString.match(regEx) != null;
                     }
@@ -595,14 +600,19 @@ const recordEditorService = services => {
                        var regExTime = /^\d{4}[/]\d{2}[/]\d{2}[ ](\d{2}):(\d{2}):(\d{2})$/;
                         return dateString.match(regExTime) != null;
                     }
-                    $('#datetime-picker-field').on('change', function () {
+                    $('#datetime-picker-field').on('keyup change', function () {
                        var testDate =  isValidDate(this.value);
                        var testDateTime =  isValidDateTime(this.value);
                         if (testDate == false && testDateTime == false) {
-                            console.log('diso');
+                           $('.date-timepicker-error').removeClass('hide');
+                           $('.date-timepicker-error').removeClass('ok');
+
+                        }else {
+                            $('.date-timepicker-error').addClass('hide');
+                            $('.date-timepicker-error').addClass('ok');
                         }
 
-                    });*/
+                    });
                     $ztextStatus.hide();
                     $('#ZTextMultiValued', options.$container).hide();
                     $editMonoValTextArea.show();
