@@ -22,10 +22,26 @@ const workzone = (services) => {
     var nextBasketScroll = false;
     var warnOnRemove = true;
     let $container;
+    let dragBloc = $('#basket-tab').val() ;
+
+    function checkActiveBloc(destBloc) {
+
+        if (document.getElementById('expose_tab') && document.getElementById('expose_tab').getAttribute('aria-expanded') == 'true') {
+            $('#basket-tab').val('#expose_tab');
+        }
+        if (document.getElementById('baskets') && document.getElementById('baskets').getAttribute('aria-expanded') == 'true') {
+            $('#basket-tab').val('#baskets');
+        }
+
+        var destBloc =  $('#basket-tab').val();
+        console.log(destBloc);
+        return destBloc;
+    }
+    checkActiveBloc(dragBloc);
 
     const initialize = () => {
         $container = $('#idFrameC');
-
+        checkActiveBloc(dragBloc);
         $container.resizable({
             handles: 'e',
             resize: function () {
@@ -68,13 +84,47 @@ const workzone = (services) => {
             }
         });
 
+        $('#idFrameC .expose_li').on('click', function (event) {
+            checkActiveBloc(dragBloc);
+        });
+
+        $('.add_expose').on('click',function (event) {
+            openExposeModalOnBasket('#DIALOG-expose-add');
+        });
+        $('#expose_list').on('change', function () {
+            $('.publication-list').empty().html('<img src="/assets/common/images/icons/main-loader.gif" alt="loading"/>');
+            $.ajax({
+                type: 'GET',
+                url: '/prod/expose/list-publication/?exposeName=' + this.value,
+                success: function (data) {
+                    $('.publication-list').empty().html(data);
+
+                    $('.expose_basket_item .top_block').on('click', function (event) {
+                        $(this).parent().find('.expose_item_deployed').toggleClass('open');
+                        $(this).toggleClass('open');
+                    });
+                    $('.edit_expose').on('click',function (event) {
+                        openExposeModalOnBasket();
+                    });
+
+                    activeExpose();
+                }
+            });
+        });
+
+        $('.publication-list').on('click', '.top-block' , function (event) {
+            $(this).parent().find('.expose_item_deployed').toggleClass('open');
+            $(this).toggleClass('open');
+        });
+
+
         $('#idFrameC .ui-tabs-nav li').on('click', function (event) {
             if ($container.attr('data-status') === 'closed') {
                 $('#retractableButton').find('i').removeClass('fa-angle-double-right').addClass('fa-angle-double-left');
                 $container.width(360);
                 $('#rightFrame').css('left', 360);
                 $('#rightFrame').width($(window).width() - 360);
-                $('#baskets, #proposals, #thesaurus_tab').hide();
+                $('#baskets, #expose_tab, #proposals, #thesaurus_tab').hide();
                 $('.ui-resizable-handle, #basket_menu_trigger').show();
                 var IDname = $(this).attr('aria-controls');
                 $('#' + IDname).show();
@@ -95,7 +145,7 @@ const workzone = (services) => {
                 $('#rightFrame').css('left', 80);
                 $('#rightFrame').width($(window).width() - 80);
                 $container.attr('data-status', 'closed');
-                $('#baskets, #proposals, #thesaurus_tab, .ui-resizable-handle, #basket_menu_trigger').hide();
+                $('#baskets, #expose_tab, #proposals, #thesaurus_tab, .ui-resizable-handle, #basket_menu_trigger').hide();
                 $('#idFrameC .ui-tabs-nav li').removeClass('ui-state-active');
                 $('.WZbasketTab').css('background-position', '15px 16px');
                 $container.addClass('closed');
@@ -163,21 +213,21 @@ const workzone = (services) => {
         });
 
         workzoneOptions = {
-            selection: new Selectable(services, $('#baskets'), {selector: '.CHIM'}),
+            selection: new Selectable(services, $(dragBloc), {selector: '.CHIM'}),
             refresh: refreshBaskets,
             addElementToBasket: function (options) {
                 let {sbas_id, record_id, event, singleSelection} = options;
                 singleSelection = !!singleSelection || false;
 
-                if ($('#baskets .SSTT.active').length === 1) {
-                    return dropOnBask(event, $('#IMGT_' + sbas_id + '_' + record_id), $('#baskets .SSTT.active'), singleSelection);
+                if ($(dragBloc+' .SSTT.active').length === 1) {
+                    return dropOnBask(event, $('#IMGT_' + sbas_id + '_' + record_id), $(dragBloc+' .SSTT.active'), singleSelection);
                 } else {
                     humane.info(localeService.t('noActiveBasket'));
                 }
             },
             removeElementFromBasket: WorkZoneElementRemover,
             reloadCurrent: function () {
-                var sstt = $('#baskets .content:visible');
+                var sstt = $(dragBloc+' .content:visible');
                 if (sstt.length > 0) {
                     getContent(sstt.prev());
                 }
@@ -224,6 +274,7 @@ const workzone = (services) => {
             }
         };
         filterBaskets();
+        $('#expose_tabs').tabs();
 
     };
 
@@ -249,7 +300,7 @@ const workzone = (services) => {
         let {basketId = false, sort, scrolltobottom, type} = options || {};
         type = typeof type === 'undefined' ? 'basket' : type;
 
-        var active = $('#baskets .SSTT.ui-state-active');
+        var active = $(dragBloc +' .SSTT.ui-state-active');
         if (basketId === 'current' && active.length > 0) {
             basketId = active.attr('id').split('_').slice(1, 2).pop();
         }
@@ -269,7 +320,7 @@ const workzone = (services) => {
                 $('#basketcontextwrap').remove();
             },
             success: function (data) {
-                var cache = $('#idFrameC #baskets');
+                var cache = $('#idFrameC '+dragBloc);
 
                 if ($('.SSTT', cache).data('ui-droppable')) {
                     $('.SSTT', cache).droppable('destroy');
@@ -283,6 +334,7 @@ const workzone = (services) => {
 
                 activeBaskets();
                 filterBaskets();
+                $('#expose_tabs').tabs();
                 $('.basketTips').tooltip({
                     delay: 200
                 });
@@ -312,8 +364,8 @@ const workzone = (services) => {
         });
     }
 
-    $('#baskets div.content select[name=valid_ord]').on('change', function () {
-        var active = $('#baskets .SSTT.ui-state-active');
+    $(dragBloc+' div.content select[name=valid_ord]').on('change', function () {
+        var active = $(dragBloc+' .SSTT.ui-state-active');
         if (active.length === 0) {
             return;
         }
@@ -416,7 +468,10 @@ const workzone = (services) => {
 
 
     function activeBaskets() {
-        var cache = $('#idFrameC #baskets');
+        checkActiveBloc(dragBloc);
+
+        //var cache = $('#idFrameC #baskets');
+        var cache = $('#idFrameC '+dragBloc);
 
         cache.accordion({
             active: 'active',
@@ -432,11 +487,11 @@ const workzone = (services) => {
                         return;
                     }
 
-                    var t = $('#baskets .SSTT.active').position().top + b_active.next().height() - 200;
+                    var t = $(dragBloc+' .SSTT.active').position().top + b_active.next().height() - 200;
 
                     t = t < 0 ? 0 : t;
 
-                    $('#baskets .bloc').stop().animate({
+                    $(dragBloc+' .bloc').stop().animate({
                         scrollTop: t
                     });
                 }
@@ -462,7 +517,7 @@ const workzone = (services) => {
             }
         });
 
-        $('.bloc', cache).droppable({
+        $('.bloc').droppable({
             accept: function (elem) {
                 if ($(elem).hasClass('grouping') && !$(elem).hasClass('SSTT')) {
                     return true;
@@ -474,15 +529,18 @@ const workzone = (services) => {
             tolerance: 'pointer',
             drop: function () {
                 fix();
+            },
+            over: function(event, ui) {
+                console.log( this.id );
             }
         });
 
-        if ($('.SSTT.active', cache).length > 0) {
-            var el = $('.SSTT.active', cache)[0];
+        if ($('.SSTT.active').length > 0) {
+            var el = $('.SSTT.active', dragBloc)[0];
             $(el).trigger('click');
         }
 
-        $('.SSTT, .content', cache)
+        $('.SSTT, .content')
             .droppable({
                 scope: 'objects',
                 hoverClass: 'baskDrop',
@@ -507,12 +565,12 @@ const workzone = (services) => {
             $('body').append('<div id="basketcontextwrap"></div>');
         }
 
-        $('.context-menu-item', cache).hover(function () {
+        $('.context-menu-item').hover(function () {
             $(this).addClass('context-menu-item-hover');
         }, function () {
             $(this).removeClass('context-menu-item-hover');
         });
-        $.each($('.SSTT', cache), function () {
+        $.each($('.SSTT'), function () {
             var el = $(this);
             $(this).find('.contextMenuTrigger').contextMenu('#' + $(this).attr('id') + ' .contextMenu', {
                 appendTo: '#basketcontextwrap',
@@ -527,7 +585,50 @@ const workzone = (services) => {
 
     }
 
+    function activeExpose() {
+        // drop on publication
+        $('#idFrameC').find('.publication-droppable')
+            .droppable({
+                scope: 'objects',
+                hoverClass: 'baskDrop',
+                tolerance: 'pointer',
+                accept: function (elem) {
+                    if ($(elem).hasClass('CHIM')) {
+                        if ($(elem).closest('.content').prev()[0] === $(this)[0]) {
+                            return false;
+                        }
+                    }
+                    if ($(elem).hasClass('grouping') || $(elem).parent()[0] === $(this)[0]) {
+                        return false;
+                    }
+                    return true;
+                },
+                drop: function (event, ui) {
+                    dropOnBask(event, ui.draggable, $(this));
+                }
+            });
+    }
+
+    function getPublicationAssetsList(publicationId, exposeName, assetsContainer) {
+        $.ajax({
+            type: 'GET',
+            url: `/prod/expose/get-publication/${publicationId}?exposeName=${exposeName}&onlyAssets=1`,
+            beforeSend: function () {
+                assetsContainer.addClass('loading');
+            },
+            success: function (data) {
+                if (typeof data.success === 'undefined') {
+                    assetsContainer.removeClass('loading');
+                    assetsContainer.empty().html(data);
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+    }
+
     function getContent(header, order) {
+
         if (window.console) {
             console.log('Reload content for ', header);
         }
@@ -563,14 +664,13 @@ const workzone = (services) => {
                     return WorkZoneElementRemover($(this), false);
                 });
 
-                $("#baskets div.content select[name=valid_ord]").on('change', function () {
-                    var active = $('#baskets .SSTT.ui-state-active');
+                $(dragBloc+" div.content select[name=valid_ord]").on('change', function () {
+                    var active = $(dragBloc+' .SSTT.ui-state-active');
                     if (active.length === 0) {
                         return;
                     }
 
                     var order = $(this).val();
-
                     getContent(active, order);
                 });
 
@@ -616,18 +716,18 @@ const workzone = (services) => {
                         left: -20
                     },
                     start: function (event, ui) {
-                        var baskets = $('#baskets');
+                        var baskets = $(dragBloc);
                         baskets.append('<div class="top-scroller"></div>' +
                             '<div class="bottom-scroller"></div>');
                         $('.bottom-scroller', baskets).bind('mousemove', function () {
-                            $('#baskets .bloc').scrollTop($('#baskets .bloc').scrollTop() + 30);
+                            $(dragBloc+' .bloc').scrollTop($(dragBloc+' .bloc').scrollTop() + 30);
                         });
                         $('.top-scroller', baskets).bind('mousemove', function () {
-                            $('#baskets .bloc').scrollTop($('#baskets .bloc').scrollTop() - 30);
+                            $(dragBloc+' .bloc').scrollTop($(dragBloc+' .bloc').scrollTop() - 30);
                         });
                     },
                     stop: function () {
-                        $('#baskets').find('.top-scroller, .bottom-scroller')
+                        $(dragBloc).find('.top-scroller, .bottom-scroller')
                             .unbind()
                             .remove();
                     },
@@ -647,7 +747,30 @@ const workzone = (services) => {
         });
     }
 
+    function openExposeModalOnBasket(edit = '#DIALOG-expose-edit') {
+        $(edit).attr('title', localeService.t('Edit expose title'))
+            .dialog({
+                autoOpen: false,
+                closeOnEscape: true,
+                resizable: true,
+                draggable: true,
+                width: 900,
+                height: 575,
+                modal: true,
+                overlay: {
+                    backgroundColor: '#000',
+                    opacity: 0.7
+                }
+            }).dialog('open');
+        $('.ui-dialog').addClass('black-dialog-wrap publish-dialog');
+        $('.close-expose-modal').on('click', function () {
+            $('#DIALOG-expose-edit').dialog('close');
+        });
+    }
+
     function dropOnBask(event, from, destKey, singleSelection) {
+        checkActiveBloc(dragBloc);
+
         let action = '';
         let dest_uri = '';
         let lstbr = [];
@@ -657,7 +780,7 @@ const workzone = (services) => {
 
         if (from.hasClass('CHIM')) {
             /* Element(s) come from an open object in the workzone */
-            action = $(' #baskets .ui-state-active').hasClass('grouping') ? 'REG2' : 'CHU2';
+            action = $(dragBloc+' .ui-state-active').hasClass('grouping') ? 'REG2' : 'CHU2';
         } else {
             /* Element(s) come from result */
             action = 'IMGT2';
@@ -691,7 +814,7 @@ const workzone = (services) => {
             }
         } else {
             sselcont = $.map(workzoneOptions.selection.get(), function (n, i) {
-                return $('.CHIM_' + n, $('#baskets .content:visible')).attr('id').split('_').slice(1, 2).pop();
+                return $('.CHIM_' + n, $(dragBloc+' .content:visible')).attr('id').split('_').slice(1, 2).pop();
             });
             lstbr = workzoneOptions.selection.get();
         }
@@ -720,60 +843,88 @@ const workzone = (services) => {
                 break;
             default:
         }
-        let url = '';
-        let data = {};
-        switch (act + action) {
-            case 'MOVCHU2CHU':
-                url = dest_uri + 'stealElements/';
-                data = {
-                    elements: sselcont
-                };
-                break;
-            case 'ADDCHU2REG':
-            case 'ADDREG2REG':
-            case 'ADDIMGT2REG':
-            case 'ADDCHU2CHU':
-            case 'ADDREG2CHU':
-            case 'ADDIMGT2CHU':
-                url = dest_uri + 'addElements/';
-                data = {
-                    lst: lstbr.join(';')
-                };
-                break;
-            default:
-                if (window.console) {
-                    console.log('Should not happen');
-                }
-                return false;
-        }
 
-        if (window.console) {
-            window.console.log('About to execute ajax POST on ', url, ' with datas ', data);
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            dataType: 'json',
-            beforeSend: function () {
-
-            },
-            success: function (data) {
-                if (!data.success) {
-                    humane.error(data.message);
-                } else {
-                    humane.info(data.message);
-                }
-                if (act === 'MOV' || $(destKey).next().is(':visible') === true || $(destKey).hasClass('content') === true) {
-                    $('.CHIM.selected:visible').fadeOut();
-                    workzoneOptions.selection.empty();
-                    return workzoneOptions.reloadCurrent();
-                }
-
-                return true;
+            let url = '';
+            let data = {};
+            switch (act + action) {
+                case 'MOVCHU2CHU':
+                    url = dest_uri + 'stealElements/';
+                    data = {
+                        elements: sselcont
+                    };
+                    break;
+                case 'ADDCHU2REG':
+                case 'ADDREG2REG':
+                case 'ADDIMGT2REG':
+                case 'ADDCHU2CHU':
+                case 'ADDREG2CHU':
+                case 'ADDIMGT2CHU':
+                    url = dest_uri + 'addElements/';
+                    data = {
+                        lst: lstbr.join(';')
+                    };
+                    break;
+                default:
+                    if (window.console) {
+                        console.log('Should not happen');
+                    }
+                    return false;
             }
-        });
+
+        //save basket after drop elt
+        if ($('#basket-tab').val() === '#baskets') {
+
+            if (window.console) {
+                window.console.log('About to execute ajax POST on ', url, ' with datas ', data);
+            }
+
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                dataType: 'json',
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if (!data.success) {
+                        humane.error(data.message);
+                    } else {
+                        humane.info(data.message);
+                    }
+                    if (act === 'MOV' || $(destKey).next().is(':visible') === true || $(destKey).hasClass('content') === true) {
+                        $('.CHIM.selected:visible').fadeOut();
+                        workzoneOptions.selection.empty();
+                        return workzoneOptions.reloadCurrent();
+                    }
+
+                    return true;
+                }
+            });
+
+        } else {
+            console.log(data.lst);
+
+            let publicationId = destKey.find('.edit_expose').attr('data-id');
+            let exposeName = $('#expose_list').val();
+            let assetsContainer = destKey.find('.expose_drag_drop');
+
+            $.ajax({
+                type: 'POST',
+                url: '/prod/expose/publication/add-assets',
+                data: {
+                    publicationId: publicationId,
+                    exposeName: exposeName,
+                    lst: data.lst
+                },
+                dataType: 'json',
+                success: function (data) {
+                    getPublicationAssetsList(publicationId, exposeName, assetsContainer);
+                    console.log(data.message);
+                }
+            });
+        }
     }
 
     function fix() {
